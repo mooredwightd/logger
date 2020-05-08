@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+
 	"github.com/mooredwightd/gotestutil"
 )
 
@@ -61,7 +62,6 @@ func TestJsonFormat(t *testing.T) {
 		// empty w/ Timestamp & severity
 		em = EventMsg{}
 		em.Timestamp = emBase.Timestamp
-		em.Sev = em.Sev
 		m, err := jf.Format(em)
 		gotestutil.AssertNil(t, err, fmt.Sprintf("%s\n", err))
 		fmt.Printf("%s\n", m)
@@ -69,7 +69,6 @@ func TestJsonFormat(t *testing.T) {
 	t.Run("A=5", func(t *testing.T) {
 		em = EventMsg{}
 		em.Timestamp = emBase.Timestamp
-		em.Sev = em.Sev
 		em.Hostname = emBase.Hostname
 		m, err := jf.Format(em)
 		gotestutil.AssertNil(t, err, fmt.Sprintf("%s\n", err))
@@ -79,7 +78,6 @@ func TestJsonFormat(t *testing.T) {
 	t.Run("A=6", func(t *testing.T) {
 		em = EventMsg{}
 		em.Timestamp = emBase.Timestamp
-		em.Sev = em.Sev
 		em.Hostname = emBase.Hostname
 		em.Appname = emBase.Appname
 		em.Pid = emBase.Pid
@@ -92,7 +90,6 @@ func TestJsonFormat(t *testing.T) {
 	t.Run("A=7", func(t *testing.T) {
 		em = EventMsg{}
 		em.Timestamp = emBase.Timestamp
-		em.Sev = em.Sev
 		em.Hostname = emBase.Hostname
 		em.Appname = emBase.Appname
 		em.Pid = emBase.Pid
@@ -106,7 +103,6 @@ func TestJsonFormat(t *testing.T) {
 	t.Run("A=8", func(t *testing.T) {
 		em = EventMsg{}
 		em.Timestamp = emBase.Timestamp
-		em.Sev = em.Sev
 		em.Hostname = emBase.Hostname
 		em.Appname = emBase.Appname
 		em.Pid = emBase.Pid

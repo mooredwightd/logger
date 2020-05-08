@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+
 	"github.com/mooredwightd/gotestutil"
 )
 
@@ -147,11 +148,12 @@ func TestLogManger(t *testing.T) {
 	// Invalid LogFile paramter for New File
 	// Alert should panic
 	t.Run(testName+"=2", func(t *testing.T) {
-		var except = false
+		//var except = false
 		defer func() {
 			if x := recover(); x != nil {
 				log.Printf("%s Caught exception", testName+"=2")
-				except = true
+				//except = true
+				t.Fatalf("%s failed", testName+"=2")
 				return
 			}
 		}()

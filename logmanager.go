@@ -80,7 +80,6 @@ var (
 func init() {
 }
 
-
 // Create a new LogManager.
 // app is a string distinguishing the application in the logs
 // lwc is a LogWriterClose which receives the logged messages.
@@ -205,7 +204,7 @@ func (l *Log) Debug(msgId string, msg string, params map[string]string) {
 func (l *Log) newEventMsg(sev Severity, msgId string, msg string, params map[string]string) *EventMsg {
 	defer func() {
 		if x := recover(); x != nil {
-			fmt.Sprintf("Error writing log: %s\n", x)
+			fmt.Printf("Error writing log: %s\n", x)
 			return
 		}
 	}()

@@ -34,27 +34,24 @@ const (
 
 	// Used to indicate a file does not have a file size constraint
 	LogSizeNotLimited = -1
-	LogMinFileSize = Mbyte
-	LogMaxFileSize = (500 * Mbyte)
-
+	LogMinFileSize    = Mbyte
+	LogMaxFileSize    = (500 * Mbyte)
 
 	// path/prefix"."date_and-or_volume"."log.
-	logFilenameExtension string = "log"
-	logFilenameDailyFormat string = "2016-01-01"
-	logFilenameTimeFormat string = "2016-01-01T23.01.01"
+	logFilenameExtension    string = "log"
+	logFilenameDailyFormat  string = "2016-01-01"
+	logFilenameTimeFormat   string = "2016-01-01T23.01.01"
 	logFilenameVolumeFormat string = "%04.4d"
 
 	// Volumes from 1 to 9999
 	logMaxVolNumber int = 9999
 
 	// Open mode is u=rw, g=rw, o=none
-	logDefaultFileMode os.FileMode = 0660
-	logDefaultOpenFlags int = os.O_CREATE | os.O_APPEND
+	logDefaultFileMode  os.FileMode = 0660
+	logDefaultOpenFlags int         = os.O_CREATE | os.O_APPEND
 
 	// Indicates the low water mark to cause a file rotation.
-	logHighWaterMark = (2*Kbyte)
-
-
+	logHighWaterMark = (2 * Kbyte)
 )
 
 type FileWriter interface {
@@ -66,29 +63,28 @@ type FileWriter interface {
 
 // Implements the a log file with a name (prefix), policy, and duration for file rotation policy.
 type LogFile struct {
-				    // prefix : Prefix for the filename. This includes the path.
-	prefix        string
-				    // currentFile: The current file for writing.
-	currentFile   string
-				    // 	The type of policy determines the remaining part.
+	// prefix : Prefix for the filename. This includes the path.
+	prefix string
+	// currentFile: The current file for writing.
+	currentFile string
+	// 	The type of policy determines the remaining part.
 	policy        PolicyType
-	volNo         int16         // Used for static files or PolicyFileSzie
-	fileSizeLimit int64         // Use for PolicyFileSize
-				    // The current io.Writer for this log.
-	f             io.WriteCloser
-	cycle         time.Duration // Time rotation cycle
-				    // Used to create a timer event for log rotation e.g. Daily, Scheduled
-	ltimer        *LogTimer
-	filenameGen   func() string
-	rotateCheck   func() bool
-	rotate        func() bool
-	newTimer      func() *LogTimer
+	volNo         int16 // Used for static files or PolicyFileSzie
+	fileSizeLimit int64 // Use for PolicyFileSize
+	// The current io.Writer for this log.
+	f     io.WriteCloser
+	cycle time.Duration // Time rotation cycle
+	// Used to create a timer event for log rotation e.g. Daily, Scheduled
+	ltimer      *LogTimer
+	filenameGen func() string
+	rotateCheck func() bool
+	rotate      func() bool
+	newTimer    func() *LogTimer
 	sync.Mutex
 }
 
 // Public methods
 //
-
 
 // Creates a simple, non-rotating log file. Two File logs with the same name (prefix) point to the
 // same file. The name parameter is a full file path and filename, with no extension.
@@ -146,7 +142,7 @@ func SizeLimitedFile(name string, size int64) (lf *LogFile, err error) {
 
 	size = max(size, LogMaxFileSize)
 	if rem := math.Mod(float64(size), float64(LogMinFileSize)); rem > 0.0 {
-		size = (size / LogMinFileSize) * LogMinFileSize + LogMinFileSize
+		size = (size/LogMinFileSize)*LogMinFileSize + LogMinFileSize
 	} else {
 		size = LogMinFileSize
 	}
@@ -225,8 +221,8 @@ func TimedFile(name string, rt time.Duration) (lf *LogFile, err error) {
 	}
 
 	lf.ltimer = NewLocalTimer(lf.cycle, func() {
-			_ = lf.LogRotate()
-		})
+		_ = lf.LogRotate()
+	})
 
 	msg := fmt.Sprintf("{\"action\":\"%s\", \"policy\":\"%s\", \"file\":\"%s\", \"timer\":\"%s\"}",
 		"start", lf.policy.String(), lf.currentFile, lf.ltimer.d.String())
@@ -375,7 +371,7 @@ func (lf *LogFile) sizeRotateCheck() bool {
 		// Assume failure, and indicate ready to rotate.
 		return true
 	}
-	ready = ((fi.Size()) + logHighWaterMark > lf.fileSizeLimit)
+	ready = ((fi.Size())+logHighWaterMark > lf.fileSizeLimit)
 
 	return ready
 }
@@ -390,6 +386,7 @@ func (lf *LogFile) sizeRotateCheck() bool {
 func (lf *LogFile) openFile(filename string) (err error) {
 	lf.f, err = os.OpenFile(filename, logDefaultOpenFlags, logDefaultFileMode)
 	if err != nil {
+		log.Printf("filelogger.openFile failed with file name \"%s\"", filename)
 		os.Stderr.WriteString(fmt.Sprintf("%s: (\"%s\") %s.\n",
 			GetCaller(), filename, err))
 		return
